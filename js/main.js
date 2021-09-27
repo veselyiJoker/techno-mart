@@ -51,18 +51,33 @@ function getRandomInteger(min, max) {
 }
 
 
-
+let page = 0;
 let catalogList = document.querySelector('.catalog-list');
+const paginationItems = document.querySelectorAll('.pagination-item a');
 
-insertCards();
+for (let elem of paginationItems) {
+    elem.addEventListener('click', ()=> {
+        event.preventDefault();
+        for (let elem of paginationItems) {
+            elem.parentNode.classList.remove('pagination-item-current');
+        }
+        elem.parentNode.classList.add('pagination-item-current');
+        page = Number(elem.textContent) - 1;
+        insertCards(page);
+    })
+}
 
-function insertCards() {
+insertCards(page);
+
+function insertCards(page) {
 
     let insertableCatalogList = document.createElement('ul');
 
     insertableCatalogList.className = 'catalog-list';
 
-    for (let i = 0; i < CARDS_IN_PAGE; i++) {
+    let startItem = page * CARDS_IN_PAGE;
+
+    for (let i = startItem; i < startItem + CARDS_IN_PAGE ; i++) {
 
         const catalogItem = document.createElement('li');
 
@@ -102,7 +117,6 @@ function insertCards() {
 }
 
 
-
 let sortType = 'price';
 let sortDirection = 'up';
 
@@ -115,19 +129,16 @@ let sortingDownBtn = document.querySelector('.sorting-down-button');
 
 sortingByPriceBtn.addEventListener('click', (evt)=> {
     evt.preventDefault();
-    sortType = 'price';
     debounce(sortingCards);
 });
 
 sortingByTypeBtn.addEventListener('click', (evt)=> {
     evt.preventDefault();
-    sortType = 'type';
     debounce(sortingCards);
 });
 
 sortingByFunctionalBtn.addEventListener('click', (evt)=> {
     evt.preventDefault();
-    sortType = 'functional';
     debounce(sortingCards);
 });
 
@@ -158,7 +169,7 @@ function sortingCards() {
         cardsArray.sort((a, b) => a[sortType] < b[sortType] ? 1 : -1);
     }
     
-    insertCards(cardsArray);
+    insertCards(page);
     
 }
 
@@ -344,13 +355,6 @@ function changeRangeBarWidth() {
     rangeBar.style.width = rangeBarWidth + 'px';
     rangeBar.style.marginLeft = pointerMinPosition + 10 + 'px';
 }
-
-
-
-
-
-
-
 
 
 
